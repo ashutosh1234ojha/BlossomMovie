@@ -8,7 +8,7 @@
 import Foundation
 
 struct APIObject: Decodable{
-    var result :  [Title] = []
+    var results :  [Title] = []
 }
 
 struct Title: Decodable, Identifiable {
