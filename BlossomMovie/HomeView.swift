@@ -51,9 +51,9 @@ struct HomeView: View {
                         }.padding(.top,10)
                         
                         HorizontalListView(header:Constants.trendingMovieString, titles:viewModel.trendingMovies)
-                        //                    HorizontalListView(header:Constants.trendingTvString)
-                        //                    HorizontalListView(header:Constants.topRatedMovieString)
-                        //                    HorizontalListView(header:Constants.topRatedTvString)
+                        HorizontalListView(header:Constants.trendingTvString, titles: viewModel.trendingTV)
+                        HorizontalListView(header:Constants.topRatedMovieString, titles: viewModel.topRatedMovies)
+                        HorizontalListView(header:Constants.topRatedTvString,titles: viewModel.topRatedTV)
                     }
                 case .failed(let underlyingError):
                     Text("Error:\(underlyingError)")

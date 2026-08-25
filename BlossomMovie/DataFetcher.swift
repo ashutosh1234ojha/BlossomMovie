@@ -13,24 +13,15 @@ struct DataFetcher {
     let tmbdApiKey =  APIConfig.shared?.tmdbAPIKey
     
     
-func fetchTitle(for media:String) async throws-> [Title] {
-    guard let baseUrl = tmbdBaseUrl else{
-        throw NetworkError.missingConfig
-    }
-    
-    guard let apiKey = tmbdApiKey else{
-        throw NetworkError.missingConfig
-    }
-    
-    guard let fetchTitleUrl = URL(string: baseUrl)?
-        .appending(path: "3/trending/\(media)/day")
-        .appending(queryItems: [URLQueryItem(name:"api_key",value:apiKey)]) else{
-            throw NetworkError.urlBuildFailed
+    func fetchTitle(for media:String, by type:String) async throws-> [Title] {
+ 
+        let fetchTitleURL = try buildUrl(media: media, type: type)
+        
+        guard let fetchTitleURL = fetchTitleURL else {
+           throw NetworkError.urlBuildFailed
         }
-            
-            print(fetchTitleUrl)
-            
-            let (data,urlResponse) = try await URLSession.shared.data(from: fetchTitleUrl)
+    
+            let (data,urlResponse) = try await URLSession.shared.data(from: fetchTitleURL)
             
             guard let response = urlResponse as? HTTPURLResponse , response.statusCode == 200 else{
                 throw NetworkError.badURLResponse(underlyingError:NSError(
@@ -46,4 +37,32 @@ func fetchTitle(for media:String) async throws-> [Title] {
             return titles
             
         }
+    
+    private func buildUrl(media:String, type:String) throws -> URL?{
+        guard let baseUrl = tmbdBaseUrl else{
+            throw NetworkError.missingConfig
+        }
+        
+        guard let apiKey = tmbdApiKey else{
+            throw NetworkError.missingConfig
+        }
+        
+        var path:String
+        
+        if type == "trending"{
+            path = "3/trending/\(media)/day"
+        } else if type == "top_rated"{
+            path = "3/\(media)/top_rated"
+        }else{
+            throw NetworkError.urlBuildFailed
+        }
+        
+        guard let url = URL(string: baseUrl)?
+            .appending(path: path)
+            .appending(queryItems: [URLQueryItem(name:"api_key",value:apiKey)]) else{
+                throw NetworkError.urlBuildFailed
+            }
+                
+        return url
+    }
 }
