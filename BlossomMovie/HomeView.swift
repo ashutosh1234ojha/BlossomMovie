@@ -53,14 +53,25 @@ struct HomeView: View {
                                 }
                             }.padding(.top,10)
                             
-                            HorizontalListView(header:Constants.trendingMovieString, titles:viewModel.trendingMovies)
-                            HorizontalListView(header:Constants.trendingTvString, titles: viewModel.trendingTV)
-                            HorizontalListView(header:Constants.topRatedMovieString, titles: viewModel.topRatedMovies)
-                            HorizontalListView(header:Constants.topRatedTvString,titles: viewModel.topRatedTV)
-                        }.navigationDestination(for: Title.self){title in
-                            TitleDetailsView(title: title)
-                            
+                            HorizontalListView(header:Constants.trendingMovieString, titles:viewModel.trendingMovies){title in
+                                titleDetailPath.append(title)
+                                
+                            }
+                            HorizontalListView(header:Constants.trendingTvString, titles: viewModel.trendingTV){title in
+                                titleDetailPath.append(title)
+                                
+                            }
+                            HorizontalListView(header:Constants.topRatedMovieString, titles: viewModel.topRatedMovies){title in
+                                titleDetailPath.append(title)
+                                
+                            }
+                            HorizontalListView(header:Constants.topRatedTvString,titles: viewModel.topRatedTV){title in
+                                titleDetailPath.append(title)
+                                
+                            }
                         }
+                        
+                        
                     case .failed(let underlyingError):
                         Text("Error:\(underlyingError)")
                     }
@@ -68,6 +79,9 @@ struct HomeView: View {
                 }.task {
                     await viewModel.getTitle()
                 }
+            }
+            .navigationDestination(for: Title.self){title in
+                TitleDetailsView(title: title)
             }
         }
     }
