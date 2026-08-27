@@ -15,12 +15,14 @@ struct TitleDetailsView: View {
             ScrollView{
                 LazyVStack(alignment: .leading){
                     
-                    AsyncImage(url: URL(string: title.posterPath ?? "")){image in
-                        image.resizable().scaledToFit()
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: geometry.size.width,height: geometry.size.height*0.85)
+                    //                    AsyncImage(url: URL(string: title.posterPath ?? "")){image in
+                    //                        image.resizable().scaledToFit()
+                    //                    } placeholder: {
+                    //                        ProgressView()
+                    //                    }
+                    //                    .frame(width: geometry.size.width,height: geometry.size.height*0.85)
+                    //
+                    YoutubePlayer(videoId: "dQw4w9WgXcQ").aspectRatio(1.3,contentMode: .fit)
                     
                     Text((title.name ?? title.title) ?? "")
                         .bold()
