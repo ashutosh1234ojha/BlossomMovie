@@ -39,6 +39,7 @@ struct DataFetcher {
                 code: (urlResponse as? HTTPURLResponse)?.statusCode ?? -1,
                 userInfo:[NSLocalizedDescriptionKey:"Invalid HTTTP Response"]))
         }
+        print("Status code:", (urlResponse as? HTTPURLResponse)?.statusCode ?? -1)
         
         let decoder =  JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -84,15 +85,24 @@ struct DataFetcher {
         
         let trailerSearch = title + YoutubeURLString.space.rawValue+YoutubeURLString.trailer.rawValue
         
+//        guard let fetchVideoURL = URL(string: baseSearchURL)?.appending(queryItems: [
+//            URLQueryItem(name: YoutubeURLString.qyeryShorten.rawValue, value: trailerSearch),
+//            URLQueryItem(name: YoutubeURLString.key.rawValue, value: searchAPIKey)
+//        ])else{
+//            throw NetworkError.urlBuildFailed
+//        }
         guard let fetchVideoURL = URL(string: baseSearchURL)?.appending(queryItems: [
+            URLQueryItem(name: "part", value: "snippet"),
+            URLQueryItem(name: "type", value: "video"),
             URLQueryItem(name: YoutubeURLString.qyeryShorten.rawValue, value: trailerSearch),
             URLQueryItem(name: YoutubeURLString.key.rawValue, value: searchAPIKey)
-        ])else{
+        ]) else {
             throw NetworkError.urlBuildFailed
         }
         
         print(fetchVideoURL)
         
-        return try await fetchAndDecode(url: fetchVideoURL, type: YoutubeSearchResponse.self).items?.first?.id?.videoId ?? ""
-    }
+        let videoId = try await fetchAndDecode(url: fetchVideoURL, type: YoutubeSearchResponse.self).items?.first?.id?.videoId ?? ""
+        print("Resolved videoId:", videoId)
+        return videoId    }
 }
