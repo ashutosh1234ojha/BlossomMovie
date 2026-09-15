@@ -11,7 +11,10 @@ struct VerticalListView: View {
     var titles:[Title]
     var body: some View {
         List(titles){title in
-            (
+            
+            NavigationLink{
+                TitleDetailsView(title: title)
+            } label: {
                 AsyncImage(url:URL(string: title.posterPath ?? "")){image in
                     HStack {
                         image.resizable()
@@ -26,7 +29,9 @@ struct VerticalListView: View {
                     ProgressView()
                 }
                     .frame(height: 150)
-            )
+            }
+           
+            
         }
     }
 }
