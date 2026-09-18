@@ -8,14 +8,24 @@
 import SwiftUI
 
 struct SearchView: View {
-    var titles = Title.previewTitles
     @State private var searchByMovies = true
+    @State private var searchText = ""
+    private let searchViewModel = SearchViewModel()
     
     var body: some View {
         NavigationStack {
             ScrollView{
+                
+                if let error = searchViewModel.errorMessage{
+                    Text(error)
+                        .foregroundStyle(.red)
+                        .padding()
+                        .background(.ultraThinMaterial)
+                        .clipShape(.rect(cornerRadius: 10))
+                }
+                
                 LazyVGrid(columns: [GridItem(),GridItem(),GridItem()]){
-                    ForEach(titles){title in
+                    ForEach(searchViewModel.searchTitles){title in
                         AsyncImage(url: URL(string: title.posterPath ?? "")){image in
                             image.resizable()
                                 .scaledToFit()
@@ -33,10 +43,23 @@ struct SearchView: View {
                 ToolbarItem(placement: .topBarTrailing){
                     Button{
                         searchByMovies.toggle()
+                        Task{
+                            await searchViewModel.getSearchTitles(by: searchByMovies ? "movie": "tv", for: searchText)
+                        }
                     } label: {
                         Image(systemName: searchByMovies ? Constants.movieIconString : Constants.tvIconString)
                     }
                 }
+            }
+            .searchable(text: $searchText, prompt: searchByMovies ? Constants.moviePlaceHolderString : Constants.tvPlaceHolderString)
+            .task(id: searchText) {
+                try? await Task.sleep(for: .milliseconds(500))
+                
+                if Task.isCancelled{
+                    return
+                }
+                
+                await searchViewModel.getSearchTitles(by: searchByMovies ? "movie": "tv", for: searchText)
             }
         }
     }
