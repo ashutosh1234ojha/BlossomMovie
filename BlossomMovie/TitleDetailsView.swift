@@ -14,6 +14,7 @@ struct TitleDetailsView: View {
     }
     
     let viewModel = ViewModel()
+    @Environment(\.modelContext) var modelContext
     
     var body: some View {
         GeometryReader{geo in
@@ -40,6 +41,10 @@ struct TitleDetailsView: View {
                         HStack{
                             Spacer()
                             Button{
+                                let saveTitle = title
+                                saveTitle.title = titleName
+                                modelContext.insert(saveTitle)
+                                try? modelContext.save()
                                 
                             } label: {
                                 Text(Constants.downloadString)
