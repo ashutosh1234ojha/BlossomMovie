@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TitleDetailsView: View {
+    @Environment(\.dismiss) var dismiss
     let title: Title
     var titleName:String {
         return (title.name ?? title.title) ?? ""
@@ -45,7 +46,7 @@ struct TitleDetailsView: View {
                                 saveTitle.title = titleName
                                 modelContext.insert(saveTitle)
                                 try? modelContext.save()
-                                
+                                dismiss()
                             } label: {
                                 Text(Constants.downloadString)
                                     .ghostButton()
@@ -59,6 +60,8 @@ struct TitleDetailsView: View {
                 }
             case .failed(let underlyingError):
                 Text(underlyingError.localizedDescription)
+                    .errorMessage()
+                        .frame(width: geo.size.width,height: geo.size.height)
             }
         }.task {
             await viewModel.getVideoId(for: titleName);

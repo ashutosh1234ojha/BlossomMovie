@@ -63,3 +63,16 @@ extension Text{
             .background(RoundedRectangle(cornerRadius: 20,style: .continuous).stroke(.buttonBorder,lineWidth: 5) )
     }
 }
+
+extension Text{
+    //This will be used as viewModifier
+    func errorMessage()-> some View{
+        self.foregroundStyle(.red)
+            .padding()
+            .background(.ultraThinMaterial)
+            .clipShape(.rect(cornerRadius: 10))
+    }
+}
+
+
+
